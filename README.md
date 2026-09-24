@@ -1,0 +1,1 @@
+# sentinel-defender-xdr-detection-as-code
