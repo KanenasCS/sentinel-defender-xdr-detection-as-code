@@ -1,0 +1,42 @@
+name: Validate Detection-as-Code
+
+on:
+  pull_request:
+    paths:
+      - "detections/**"
+      - "research/**"
+      - "scripts/**"
+      - "bicepconfig.json"
+      - ".github/workflows/validate.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "detections/**"
+      - "research/**"
+      - "scripts/**"
+      - "bicepconfig.json"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Static detection validation
+        run: python scripts/validate_detection.py
+
+      - name: Update Azure CLI Bicep
+        run: az bicep upgrade
+
+      - name: Build all Bicep detection files
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          while IFS= read -r -d '' file; do
+            echo "Building ${file}"
+            az bicep build --file "${file}"
+          done < <(find detections -type f -name '*.bicep' -print0)

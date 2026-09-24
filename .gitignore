@@ -1,0 +1,20 @@
+# Bicep build output
+*.json
+
+# Keep repository configuration JSON
+!bicepconfig.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local test output
+out/
+tmp/

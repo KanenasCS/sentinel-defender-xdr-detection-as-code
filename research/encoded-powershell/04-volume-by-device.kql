@@ -1,0 +1,14 @@
+// Estimate match distribution by endpoint before enabling the detection.
+
+DeviceProcessEvents
+| where FileName in~ ("powershell.exe", "pwsh.exe")
+| where ProcessCommandLine has "EncodedCommand"
+    or ProcessCommandLine contains "-enc "
+    or ProcessCommandLine contains "FromBase64String"
+| summarize
+    Matches = count(),
+    Users = dcount(AccountSid),
+    FirstSeen = min(Timestamp),
+    LastSeen = max(Timestamp)
+    by DeviceId, DeviceName
+| order by Matches desc

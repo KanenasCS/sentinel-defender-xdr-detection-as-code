@@ -1,0 +1,19 @@
+// Final event-level query used by the deployable custom detection.
+// Preserve Timestamp, DeviceId, and ReportId for event/device context.
+
+DeviceProcessEvents
+| where FileName in~ ("powershell.exe", "pwsh.exe")
+| where ProcessCommandLine has "EncodedCommand"
+    or ProcessCommandLine contains "-enc "
+    or ProcessCommandLine contains "FromBase64String"
+| project
+    Timestamp,
+    DeviceId,
+    ReportId,
+    DeviceName,
+    FileName,
+    ProcessCommandLine,
+    AccountName,
+    AccountSid,
+    InitiatingProcessFileName,
+    InitiatingProcessCommandLine

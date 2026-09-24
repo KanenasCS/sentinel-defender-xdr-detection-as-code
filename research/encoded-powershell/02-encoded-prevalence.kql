@@ -1,0 +1,11 @@
+// Measure the prevalence of common encoded/Base64-related PowerShell indicators.
+
+DeviceProcessEvents
+| where FileName in~ ("powershell.exe", "pwsh.exe")
+| where ProcessCommandLine has "EncodedCommand"
+    or ProcessCommandLine contains "-enc "
+    or ProcessCommandLine contains "FromBase64String"
+| summarize
+    Executions = count(),
+    Devices = dcount(DeviceId),
+    Users = dcount(AccountSid)

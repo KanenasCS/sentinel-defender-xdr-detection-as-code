@@ -1,0 +1,15 @@
+// Identify the parent processes responsible for encoded PowerShell execution.
+// Use this for false-positive research before adding exclusions.
+
+DeviceProcessEvents
+| where FileName in~ ("powershell.exe", "pwsh.exe")
+| where ProcessCommandLine has "EncodedCommand"
+    or ProcessCommandLine contains "-enc "
+    or ProcessCommandLine contains "FromBase64String"
+| summarize
+    Executions = count(),
+    FirstSeen = min(Timestamp),
+    LastSeen = max(Timestamp),
+    Devices = dcount(DeviceId)
+    by InitiatingProcessFileName, InitiatingProcessCommandLine
+| order by Executions desc

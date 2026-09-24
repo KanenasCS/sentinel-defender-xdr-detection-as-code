@@ -1,0 +1,10 @@
+// Baseline PowerShell and PowerShell Core process execution.
+
+DeviceProcessEvents
+| where FileName in~ ("powershell.exe", "pwsh.exe")
+| summarize
+    Executions = count(),
+    Devices = dcount(DeviceId),
+    Users = dcount(AccountSid)
+    by FileName
+| order by Executions desc
